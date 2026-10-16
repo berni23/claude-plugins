@@ -17,7 +17,7 @@ right before the commit.
 ## Install
 
 ```
-/plugin marketplace add berni23/baton
+/plugin marketplace add berni23/baton-claude-skills
 /plugin install baton@baton
 ```
 

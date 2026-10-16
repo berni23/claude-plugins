@@ -6,8 +6,8 @@
     "name": "Bernat Ferrer",
     "url": "https://github.com/berni23"
   },
-  "homepage": "https://github.com/berni23/baton",
-  "repository": "https://github.com/berni23/baton",
+  "homepage": "https://github.com/berni23/baton-claude-skills",
+  "repository": "https://github.com/berni23/baton-claude-skills",
   "license": "Apache-2.0",
   "keywords": ["handoff", "session", "code-review", "workflow", "github"]
 }
