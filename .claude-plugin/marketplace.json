@@ -1,0 +1,15 @@
+{
+  "name": "baton",
+  "description": "baton: a relay-race handoff between Claude Code sessions, plus a two-reviewer PR review loop.",
+  "owner": {
+    "name": "Bernat Ferrer",
+    "url": "https://github.com/berni23"
+  },
+  "plugins": [
+    {
+      "name": "baton",
+      "source": "./",
+      "description": "A relay-race handoff between Claude Code sessions, plus a two-reviewer PR review loop."
+    }
+  ]
+}
