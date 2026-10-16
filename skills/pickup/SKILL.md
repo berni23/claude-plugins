@@ -97,6 +97,14 @@ on with it; don't narrate options you are not going to take.
 
 ## 7. Work it, the way the project works
 
+- **Branch before the first edit.** Work never happens on the default branch (`main`, or whatever
+  `git symbolic-ref refs/remotes/origin/HEAD` names). Once the item is picked, if you are on it,
+  create a branch named after the item and switch to it: `git switch -c <item-id>-<short-slug>`
+  (e.g. `6-engine-loop` for issue #6, `PROJ-123-login-retry` for a tracker key), or follow the
+  naming the spec gives. Uncommitted changes move with the switch, so this also rescues work a
+  previous session left on the default branch. Already on the item's branch (an open PR,
+  `/baton:check-cr`): stay on it. On some other item's branch: stop and ask. Creating a branch is
+  local and is not a commit; still don't commit or push unless asked.
 - **The spec's hard requirements beat features.** A change that breaks one is wrong as shaped — say
   so before building it.
 - **Every bug fix gets a regression test, verified to fail before the fix.** Mutate the fix away,

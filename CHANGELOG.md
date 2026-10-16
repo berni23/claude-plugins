@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `/baton:pickup` switches to a branch named after the item before its first edit, never working
+  on the default branch; uncommitted work left there moves with it.
+
 ## 0.2.0
 
 - `/baton:pickup` and `/baton:update` work with any tracker: GitHub issues by default, or the one

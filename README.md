@@ -28,7 +28,7 @@ hook.
 
 | | What it does |
 |---|---|
-| `/baton:pickup` | Session start. Reads the spec (`CLAUDE.md` / `AGENTS.md`) and `baton.md`, checks every claim in it against `git log` and `gh`, fixes what's stale, then works the next item. An open PR with an unanswered review comes first. |
+| `/baton:pickup` | Session start. Reads the spec (`CLAUDE.md` / `AGENTS.md`) and `baton.md`, checks every claim in it against `git log` and `gh`, fixes what's stale, then switches to a branch for the next item and works it. An open PR with an unanswered review comes first. |
 | `/baton:update` | Before a commit. Rewrites `baton.md`: what was done (verified only), the next items in order with the *why*, decisions waiting on you. Never branch names, SHAs or merge state: git knows those better. Bugs go to issues and decisions to the spec, not the baton. |
 | `/baton:cr` | Reviews a PR twice, independently: one Opus reviewer leading with runtime, state and failure, one Sonnet reviewer leading with spec, contract and test coverage. Verifies every finding, then posts **one** merged GitHub review, tagging each finding `[A+B]`, `[A]` or `[B]`. Open questions go to a local `scratch.review`. |
 | `/baton:check-cr` | Answers the review, in the session that wrote the code. Triages each finding (real, already fixed, wrong, out of scope → issue, spec disagreement), fixes the real ones with a test seen failing first, and replies on every thread. |
