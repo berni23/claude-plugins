@@ -1,6 +1,6 @@
 ---
 name: pickup
-description: Take the baton at session start — read the spec and baton.md, reconcile them against git and GitHub, then pick up and work the next item. Use at the start of a session in a repo that has a baton.md.
+description: Take the baton at session start — read the spec and baton.md, reconcile them against git and the project's tracker (GitHub issues by default; Jira, Linear, GitLab… if the spec names one), then pick up and work the next item. Use at the start of a session in a repo that has a baton.md.
 argument-hint: [issue number or roadmap item, to skip the pick] [scope notes, e.g. "just the design, don't implement"]
 ---
 
@@ -27,18 +27,27 @@ hunk. Read `CLAUDE.local.md` too if it exists.
 Then `baton.md`. The spec is what the project must be; the baton is what is in flight right now.
 Neither substitutes for the other.
 
+**Know the tracker** before you read further. It is GitHub issues (through `gh`) unless the spec
+names another — Jira, Linear, GitLab, … — in which case use that, through whatever CLI or MCP server
+this session has for it. If the spec names a tracker you cannot reach, say so and ask; do not quietly
+fall back to GitHub. If the project has no tracker at all, the roadmap and the user stand in for it
+everywhere below.
+
 ## 2. Know what the baton deliberately does not contain
 
 ⚠️ `/baton:update` **forbids** merge state, push state, branch names and SHAs in that file, and it
-**deletes rather than appends**. So the baton is lossy *by contract*, and the missing half is in git
-and `gh`, which answer correctly and always:
+**deletes rather than appends**. So the baton is lossy *by contract*, and the missing half is in git,
+the code host and the tracker, which answer correctly and always:
 
 ```bash
 git log --oneline -8
 git status --porcelain          # uncommitted work the baton cannot know about
-gh pr list                      # an open PR the handoff was not allowed to mention
-gh issue list --limit 15
+gh pr list                      # if the repo is on GitHub: an open PR the handoff could not mention
+gh issue list --limit 15        # if GitHub issues are the tracker
 ```
+
+On another tracker, list its open items assigned to this project or milestone with its own tool
+instead of `gh issue list`. Skip `gh pr list` when the repo has no GitHub remote.
 
 If the spec has a roadmap or a status line, it says which milestone is current. **Do not go looking
 in `baton.md` for something it was told not to write.** Ask git.
@@ -49,25 +58,28 @@ in `baton.md` for something it was told not to write.** Ask git.
 file in this session** — that is part of taking the baton, not a detour. Say what was stale in one
 line and move on.
 
-- **An open PR carrying an unaddressed review is the next work** — `/baton:check-cr` — not a new
-  item. Finishing beats starting. A PR with no review at all is a candidate for `/baton:cr`.
+- **An open PR carrying an unaddressed review is the next work** — `/baton:check-cr` on GitHub —
+  not a new item. Finishing beats starting. A PR with no review at all is a candidate for
+  `/baton:cr`.
 - Dependabot PRs are not handoff items; mention them only if one blocks CI.
 
 ## 4. §1 of the baton — "Last session"
 
-Read it as *claims to verify*, not as history to trust. An issue listed done should be closed; work
-described as landed should be in `git log`; a milestone listed done should match the spec's status
-line. Close or correct whatever drifted — and check closing keywords did fire (a keyword works only
-in a PR description or commit message, one per issue, into the default branch).
+Read it as *claims to verify*, not as history to trust. A tracker item listed done should be closed
+(or in the tracker's done state); work described as landed should be in `git log`; a milestone
+listed done should match the spec's status line. Close or correct whatever drifted — and check the
+automation did fire where the project relies on it (on GitHub, a closing keyword works only in a PR
+description or commit message, one per issue, into the default branch).
 
 ## 5. §2 of the baton — "Do this next"
 
-Take its order. It encodes a *why* that the roadmap and `gh issue list` cannot show: what unblocks
-what, a seam left mid-way, an ordering that costs a rewrite if taken backwards.
+Take its order. It encodes a *why* that the roadmap and the tracker cannot show: what unblocks what,
+a seam left mid-way, an ordering that costs a rewrite if taken backwards.
 
-Then **read the source in full**: `gh issue view <n> --comments` for an issue (later comments
-supersede the body), or the roadmap line plus every spec section the item touches for a roadmap
-item. **The issue body and the spec win over the baton's one-line summary.**
+Then **read the source in full**: the tracker item with all its comments (`gh issue view <n>
+--comments` on GitHub; later comments supersede the body), or the roadmap line plus every spec
+section the item touches for a roadmap item. **The tracker item and the spec win over the baton's
+one-line summary.**
 
 **Milestones are indicators, not hard gates.** If the coherent change pulls in later-milestone work,
 do it and say so, so the roadmap and the baton stay honest.
@@ -79,8 +91,8 @@ work: an item is not ready just because it is next in the list.
 
 Stop and ask when the item is ambiguous, when two candidates are genuinely tied, when the work
 depends on one of those open decisions, or when it would change the spec — **for anything
-ambiguous, ASK rather than assume.** When the user settles one, record it **on the issue or in the
-spec**, not only in the reply, or it gets re-litigated. Otherwise state the pick in one line and get
+ambiguous, ASK rather than assume.** When the user settles one, record it **on the tracker item or
+in the spec**, not only in the reply, or it gets re-litigated. Otherwise state the pick in one line and get
 on with it; don't narrate options you are not going to take.
 
 ## 7. Work it, the way the project works
@@ -105,8 +117,9 @@ on with it; don't narrate options you are not going to take.
 ⚠️ **Never let `baton.md` be a finding's only home** — `/baton:update` rewrites it every session:
 
 - a design decision or an invariant a future change could innocently undo → **the spec**
-- work to be done, a latent bug, a deferred decision → **a GitHub issue** (`gh issue create`), even
-  when you also mention it in the baton. A duplicate issue is cheap; a lost finding is not.
+- work to be done, a latent bug, a deferred decision → **a tracker item** (`gh issue create` on
+  GitHub), even when you also mention it in the baton; with no tracker, the roadmap. A duplicate
+  item is cheap; a lost finding is not.
 
 ## 9. Hand back
 

@@ -41,8 +41,13 @@ Run `/baton:update` once; it creates `baton.md`. Commit it. From then on, start 
 `/baton:pickup`.
 
 The skills read your project's conventions from its spec rather than assuming any: the check command
-from `CLAUDE.md`, `CONTRIBUTING.md`, the `Makefile` or CI; work items from GitHub issues and from a
-roadmap if your spec has one. The better your `CLAUDE.md` states its hard rules, the sharper the
+from `CLAUDE.md`, `CONTRIBUTING.md`, the `Makefile` or CI; work items from your tracker and from a
+roadmap if your spec has one.
+
+**Tracker.** `/baton:pickup` and `/baton:update` use GitHub issues by default. To use another
+tracker, name it in your `CLAUDE.md` (e.g. "Work is tracked in Jira, project PROJ"); the skills then
+use whatever CLI or MCP server the session has for it, and the baton names items by that tracker's
+ids (`PROJ-123`). With no tracker at all, the roadmap in your spec stands in for it. The better your `CLAUDE.md` states its hard rules, the sharper the
 reviews.
 
 ## Why it's built this way
