@@ -1,0 +1,13 @@
+{
+  "name": "baton",
+  "version": "0.3.0",
+  "description": "A relay-race handoff between Claude Code sessions: /baton:update writes baton.md before every commit, /baton:pickup verifies it against git and the tracker at the next session's start and works the next item.",
+  "author": {
+    "name": "Bernat Ferrer",
+    "url": "https://github.com/berni23"
+  },
+  "homepage": "https://github.com/berni23/claude-plugins",
+  "repository": "https://github.com/berni23/claude-plugins",
+  "license": "Apache-2.0",
+  "keywords": ["handoff", "session", "context", "workflow", "git"]
+}

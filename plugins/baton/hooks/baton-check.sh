@@ -18,7 +18,13 @@
 #
 # Blocks `git commit` unless baton.md is part of the commit. Escape
 # hatch, for a commit that genuinely changes nothing a next session needs to
-# know: put [no-baton] anywhere in the command, or prefix BATON_SKIP=1.
+# know: put [no-baton] in the commit message, or prefix BATON_SKIP=1.
+#
+# This hook only sees the commits Claude makes. The git commit-msg hook next to
+# it (installed by install-git-hook.sh) holds every commit to the same rule;
+# this one stays because it stops Claude *before* the commit runs, with
+# instructions it can act on, and works where the git hook could not be
+# installed.
 set -uo pipefail
 
 verdict="$(cat | python3 -c '
@@ -82,6 +88,10 @@ repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 baton="baton.md"
 [ -f "$repo_root/$baton" ] || exit 0
 
+# A repo that gained its baton.md this session has no git hook yet: install it
+# now, so commits made outside Claude are held to it from the first one.
+(cd "$repo_root" && "$(dirname "$0")/install-git-hook.sh") >/dev/null 2>&1 || true
+
 # Staged or merely modified both count. The hook runs *before* the command, so a
 # `git add -A && git commit` has not staged anything yet, and `git commit -a`
 # stages at commit time — insisting on the index would block both while the edit
@@ -114,6 +124,7 @@ you are still holding the context needed to write it. Before committing:
 
 If this commit genuinely changes nothing the next session needs to know (a typo,
 a formatting pass), do NOT write a cosmetic edit just to satisfy this check —
-add [no-baton] to the command instead, and say so in your reply to the user.
+add [no-baton] to the commit message instead, and say so in your reply to the
+user.
 MSG
 exit 2

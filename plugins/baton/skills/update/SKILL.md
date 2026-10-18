@@ -16,8 +16,15 @@ reader.
 
 Session note from the user, if any: $ARGUMENTS
 
-**No `baton.md` yet?** Create it with the three sections below. From then on the `baton-check` hook
-holds every commit in this repo to it; a repo without the file is never blocked.
+**No `baton.md` yet?** The first one is normally bootstrapped by `/baton:pickup` at session start. If
+you got here first, create it with the three sections below. From then on the baton hooks hold
+every commit in this repo to it, yours and Claude's; a repo without the file is never blocked.
+
+⚠️ **Rewrite the newest baton, not just the checked-out one.** Batons are committed on work branches,
+so another branch can hold a newer one than this tree (`git log --branches --remotes -1 --format='%h %cr %D' --
+baton.md`). If it does, start from that one (`git show <hash>:baton.md`). **On a merge conflict in
+`baton.md`**, do not merge the two sides line by line: take the side from the newer commit and
+rewrite it by the rules below. The file is a snapshot, not a log.
 
 ## What a work item is called here
 
@@ -114,6 +121,6 @@ through once the file is part of it. The next session opens with `/baton:pickup`
 you just wrote.
 
 **If nothing moved** — a typo fix, a formatting pass, a dependency bump — do **not** manufacture a
-cosmetic edit to satisfy the hook. Add `[no-baton]` to the commit command and say in your reply that
+cosmetic edit to satisfy the hook. Add `[no-baton]` to the commit message and say in your reply that
 you skipped the handoff and why. A padded brief stops being read, which is the same failure as a
 stale one.

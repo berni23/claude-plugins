@@ -1,6 +1,6 @@
 {
-  "name": "baton",
-  "description": "baton: a relay-race handoff between Claude Code sessions, plus a two-reviewer PR review loop.",
+  "name": "laight",
+  "description": "laight plugins for Claude Code, by Bernat Ferrer: baton (session handoff) and cross (two-reviewer PR review).",
   "owner": {
     "name": "Bernat Ferrer",
     "url": "https://github.com/berni23"
@@ -8,8 +8,13 @@
   "plugins": [
     {
       "name": "baton",
-      "source": "./",
-      "description": "A relay-race handoff between Claude Code sessions, plus a two-reviewer PR review loop."
+      "source": "./plugins/baton",
+      "description": "A relay-race handoff between Claude Code sessions: baton.md written at every commit, verified at the next session's start."
+    },
+    {
+      "name": "cross",
+      "source": "./plugins/cross",
+      "description": "Two independent code reviewers, one merged and verified GitHub review, answered in the session that wrote the code."
     }
   ]
 }

@@ -1,0 +1,36 @@
+#!/bin/sh
+# baton-commit-msg-hook — installed by the baton Claude Code plugin.
+#
+# The same check the plugin's Claude Code hook makes, as a git hook, so it holds
+# every commit to the handoff: yours from a terminal or an IDE, and Claude's.
+# Blocks a commit that does not include baton.md, in a repo that has one.
+#
+# Escape hatches, for a commit that changes nothing the next session needs to
+# know: [no-baton] in the commit message, BATON_SKIP=1, or git commit --no-verify.
+
+root="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
+[ -f "$root/baton.md" ] || exit 0
+[ "${BATON_SKIP:-}" = 1 ] && exit 0
+grep -v '^#' "$1" | grep -qF '[no-baton]' && exit 0
+
+# Merges, cherry-picks, reverts and rebases replay work that was already handed off.
+gitdir="$(git rev-parse --git-dir)"
+for f in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply; do
+    [ -e "$gitdir/$f" ] && exit 0
+done
+
+# The index is what gets committed; `git commit -a` and `git commit <paths>` point
+# GIT_INDEX_FILE at the index they are about to commit, so this sees those too.
+git diff --cached --name-only | grep -qx 'baton.md' && exit 0
+
+cat >&2 <<'MSG'
+BATON NOT PASSED — baton.md is not part of this commit.
+
+baton.md is the handoff to the next session. Update it with what this commit
+finished and what comes next (in Claude Code: /baton:update), stage it, and
+commit again.
+
+If this commit changes nothing the next session needs to know (a typo, a
+formatting pass), add [no-baton] to the commit message instead.
+MSG
+exit 1

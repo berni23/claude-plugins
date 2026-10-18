@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Review the target **twice, independently**, verify every finding yourself, and post **one merged
 review**. Delegate both reviews to this plugin's `code-reviewer` agent (Agent tool,
-`subagent_type: "baton:code-reviewer"`) — do not review inline.
+`subagent_type: "cross:code-reviewer"`) — do not review inline.
 
 Target: $ARGUMENTS
 
@@ -146,11 +146,11 @@ Write **`scratch.review`** in the repo root from the two halves, then delete the
 - suggestions, verification gaps ("spot-checked, not audited", "not run for real"), and judgement
   calls an agent made on the user's behalf.
 
-⚠️ **`scratch.review` is git-ignored and local** — a handoff to `/baton:check-cr`, never a durable
+⚠️ **`scratch.review` is git-ignored and local** — a handoff to `/cross:fix-cr`, never a durable
 home. **Work to be done goes on an issue**, always.
 
 ## 6. Relay
 
 Relay the reconciled result — **neither agent's report is shown to the user.** Keep the tiers; say
 where the review was posted (URL + id) and what went into `scratch.review`. Lead with anything that
-needs the user's decision before `/baton:check-cr` can fix it.
+needs the user's decision before `/cross:fix-cr` can fix it.

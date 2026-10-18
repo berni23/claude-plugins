@@ -1,9 +1,35 @@
 # Changelog
 
-## Unreleased
+## 0.3.0
 
+- **Split into two plugins** in the same marketplace, installable separately: `baton` (`pickup`,
+  `update`, the `baton-check` hook) and `cross` (`cr`, `fix-cr`, the `code-reviewer` and `fix-planner` agents).
+  **Breaking:** `/baton:cr` and `/baton:check-cr` are now `/cross:cr` and `/cross:fix-cr`; install
+  them with `/plugin install cross@laight`.
+- **Breaking:** the repo is now `berni23/claude-plugins` and the marketplace is named `laight`
+  (was `baton`). Re-add it with `/plugin marketplace add berni23/claude-plugins` and install
+  `baton@laight`.
+- `/baton:pickup` bootstraps the first `baton.md` in a repo that has none: it proposes an order
+  from the tracker and roadmap, asks you to confirm it, writes the file and starts on the first
+  item. Start every session with `/baton:pickup`, the first one included.
+- The commit check holds **every** commit to `baton.md`, not only Claude's: in a repo with a
+  `baton.md`, the plugin installs a git `commit-msg` hook (at session start, or before Claude's
+  next commit). It never overwrites an existing `commit-msg` hook and skips repos that set
+  `core.hooksPath`. The opt-out is now `[no-baton]` in the commit **message**; `--no-verify`
+  also skips it.
+- `/baton:pickup` and `/baton:update` read the newest `baton.md` across all branches, not just the
+  checked-out one, so a session that starts on `main` before the last PR merged doesn't follow an
+  out-of-date handoff. A merge conflict in `baton.md` is resolved by taking the newer side and
+  rewriting it.
 - `/baton:pickup` switches to a branch named after the item before its first edit, never working
   on the default branch; uncommitted work left there moves with it.
+- **Breaking:** `check-cr` is renamed `/cross:fix-cr` and now works like `/cross:cr`: two
+  independent Opus `fix-planner` agents (smallest change / root cause) plan an answer to every
+  finding, and the session compares the plans with the same `[A+B]`/`[A]`/`[B]` trust, shows the
+  decision table, then fixes one finding at a time. It also checks the review is for the current
+  `HEAD`, and rebuilds intent from the PR, spec and git log when the session didn't write the code.
+- `/baton:pickup` and `/cross:fix-cr` no longer tell Claude to hold off on committing and pushing
+  until asked; that is left to your own Claude Code settings and instructions.
 
 ## 0.2.0
 

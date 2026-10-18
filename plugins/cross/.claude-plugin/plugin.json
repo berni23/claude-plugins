@@ -1,0 +1,13 @@
+{
+  "name": "cross",
+  "version": "0.3.0",
+  "description": "Two-reviewer PR review: /cross:cr runs two independent code reviewers (Opus and Sonnet, different lenses), verifies every finding and posts one merged GitHub review; /cross:fix-cr has two independent planners answer every finding, then decides and applies the fixes in the session that wrote the code.",
+  "author": {
+    "name": "Bernat Ferrer",
+    "url": "https://github.com/berni23"
+  },
+  "homepage": "https://github.com/berni23/claude-plugins",
+  "repository": "https://github.com/berni23/claude-plugins",
+  "license": "Apache-2.0",
+  "keywords": ["code-review", "pull-request", "github", "subagents", "workflow"]
+}

@@ -1,6 +1,6 @@
 ---
 name: pickup
-description: Take the baton at session start — read the spec and baton.md, reconcile them against git and the project's tracker (GitHub issues by default; Jira, Linear, GitLab… if the spec names one), then pick up and work the next item. Use at the start of a session in a repo that has a baton.md.
+description: Take the baton at session start — read the spec and baton.md, reconcile them against git and the project's tracker (GitHub issues by default; Jira, Linear, GitLab… if the spec names one), then pick up and work the next item. Use at the start of every session, including the first in a repo with no baton.md yet, which it bootstraps.
 argument-hint: [issue number or roadmap item, to skip the pick] [scope notes, e.g. "just the design, don't implement"]
 ---
 
@@ -12,8 +12,21 @@ three and acts on each — §4, §5, §6 below. If a target was given, skip the 
 everything else: the baton and the blocked-decisions list change *how* an item is worked, not only
 which one.
 
-**No `baton.md`?** Say so in one line, do §1–§3 anyway (they stand on their own), and offer to start
-one with `/baton:update` at the next commit.
+**No `baton.md` on any branch?** (§1 says how to check.) This is the first session — **bootstrap the
+baton** instead of asking for one. Do §1–§3 as usual, then in place of §4–§6 write the first baton
+yourself, in the shape `/baton:update` defines (three sections, items named by tracker id or
+roadmap line, nothing git can answer):
+
+- **Last session** — `First baton.`, nothing else.
+- **Do this next** — a *proposed* order built from the open tracker items and the spec's current
+  milestone, a sentence of *why this order* each. A target in `$ARGUMENTS` goes first.
+- **Waiting on the user** — anything ambiguous you hit while reading.
+
+⚠️ **Show the order and let the user confirm or reorder it before you start** — a first baton is a
+guess, and the user knows priorities the tracker does not show. With no tracker items and no
+roadmap, ask what to work on and build the list from the answer. Write `baton.md` with what they
+settle, then go on to §7 with the first item. It goes in with the first commit; from then on the
+`baton-check` hook keeps it current.
 
 ## 1. Read the spec first
 
@@ -26,6 +39,21 @@ hunk. Read `CLAUDE.local.md` too if it exists.
 
 Then `baton.md`. The spec is what the project must be; the baton is what is in flight right now.
 Neither substitutes for the other.
+
+⚠️ **Read the newest baton, not the checked-out one.** `/baton:update` commits it with the work, on
+the work's branch, so until that branch merges, the default branch holds the baton from a session
+earlier — and following it repeats work that is already done. Find the latest commit that touched it
+on any branch:
+
+```bash
+git fetch --quiet origin 2>/dev/null
+git log --branches --remotes -1 --format='%h %cr %D' -- baton.md      # newest baton, and the branch it is on
+git show <hash>:baton.md                              # read that one
+```
+
+An uncommitted edit to `baton.md` in the working tree is newer than any commit, so it wins. If the
+newest baton is not the one checked out, say in one line which branch it came from. No hit and no
+file in the tree means there is no baton yet: bootstrap one (top of this skill).
 
 **Know the tracker** before you read further. It is GitHub issues (through `gh`) unless the spec
 names another — Jira, Linear, GitLab, … — in which case use that, through whatever CLI or MCP server
@@ -58,9 +86,9 @@ in `baton.md` for something it was told not to write.** Ask git.
 file in this session** — that is part of taking the baton, not a detour. Say what was stale in one
 line and move on.
 
-- **An open PR carrying an unaddressed review is the next work** — `/baton:check-cr` on GitHub —
-  not a new item. Finishing beats starting. A PR with no review at all is a candidate for
-  `/baton:cr`.
+- **An open PR carrying an unaddressed review is the next work** — answer it on GitHub
+  (`/cross:fix-cr`, if the `cross` plugin is installed) — not a new item. Finishing beats
+  starting. A PR with no review at all is a candidate for a review (`/cross:cr`).
 - Dependabot PRs are not handoff items; mention them only if one blocks CI.
 
 ## 4. §1 of the baton — "Last session"
@@ -103,8 +131,10 @@ on with it; don't narrate options you are not going to take.
   (e.g. `6-engine-loop` for issue #6, `PROJ-123-login-retry` for a tracker key), or follow the
   naming the spec gives. Uncommitted changes move with the switch, so this also rescues work a
   previous session left on the default branch. Already on the item's branch (an open PR,
-  `/baton:check-cr`): stay on it. On some other item's branch: stop and ask. Creating a branch is
-  local and is not a commit; still don't commit or push unless asked.
+  `/cross:fix-cr`): stay on it. On some other item's branch: stop and ask.
+- **Carry the newest baton onto the branch.** If the `baton.md` checked out after the switch is
+  older than the one you read in §1, bring that one over (`git show <hash>:baton.md > baton.md`), so
+  the next `/baton:update` rewrites the current handoff rather than a stale one.
 - **The spec's hard requirements beat features.** A change that breaks one is wrong as shaped — say
   so before building it.
 - **Every bug fix gets a regression test, verified to fail before the fix.** Mutate the fix away,
@@ -132,7 +162,6 @@ on with it; don't narrate options you are not going to take.
 ## 9. Hand back
 
 Report what you did, what you verified — naming the commands you actually ran — and what is left.
-**Don't commit and don't push unless asked.**
 
-When you are asked to commit, the loop closes where it opened: `baton.md` goes in with the change,
+When you commit, the loop closes where it opened: `baton.md` goes in with the change,
 the `baton-check` hook enforces it, and **`/baton:update` says what to write.**
