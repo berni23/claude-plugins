@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+- `/cross:cr` uses the ticket, acceptance criteria and decisions already in the session that runs
+  it, without fetching any, when it reconciles the two reviews: it can drop a finding about scope
+  the ticket answers, or add one the reviewers couldn't see, tagged `[S]`. The reviewers never
+  get that context. No context removes a real defect, and the author's rationale is not evidence.
+- The reviewers and planners no longer run the project's code (tests, builds, check commands):
+  they confirm findings by reading, since the PR under review controls what would execute.
+- `/cross:cr` may drop low-severity findings, especially those only one reviewer raised.
+- `/cross:cr` checks this round's findings against earlier rounds' threads, after both reviewers
+  finish: a finding rejected before, for a reason that still holds, isn't posted again.
+- `/cross:cr` stops if you are not on the PR's branch, instead of reviewing the wrong tree.
+- Model fallback: if Opus or Sonnet isn't available, `/cross:cr` and `/cross:fix-cr` run on the
+  other model instead of stopping, and say so.
+- Documented that `/cross:fix-cr` never pushes.
+
 ## 0.3.0
 
 - **Split into two plugins** in the same marketplace, installable separately: `baton` (`pickup`,

@@ -31,14 +31,18 @@ the review.
 
 - **Two reviewers, reviewing blind.** One Opus reviewer leads with runtime, state and failure modes.
   One Sonnet reviewer leads with spec, contract and test coverage. Neither sees the other's output.
-- **Every finding is verified before you see it.** Each finding is checked against the actual code,
-  and claims about behaviour are confirmed with a throwaway test where possible. False positives
-  are dropped, and the reason is recorded.
+- **Every finding is verified before you see it.** Each finding is checked against the actual code
+  by reading it; the reviewers never run the PR's code. False positives and low-value noise are
+  dropped, and the reason is recorded.
 - **One review, with a trust label on every comment.** It posts as a normal GitHub review, and each
   comment is tagged with who found it:
   - **`[A+B]`**: both reviewers found it on their own. Almost certainly real.
   - **`[A]`** / **`[B]`**: only one found it, and it was re-checked by hand before posting. These
     are the bugs a single reviewer would have missed.
+  - **`[S]`**: added by the session that ran the review, from a ticket or requirement it already
+    had in context (an acceptance criterion the diff misses). The reviewers never see that
+    context; only the final pass uses it, to add findings like this or clear ones about scope
+    the ticket already answers. It never clears a real defect, and never goes looking for context.
 
 > **[A+B]** `retry()` re-enqueues the job before the lock is released, so a fast worker picks it up
 > while the first attempt is still writing. Two writes to the same row. Confirmed by reading
@@ -62,10 +66,16 @@ open PR  →  /cross:cr  →  /cross:fix-cr  →  push
 
 GitHub-only. The more clearly your `CLAUDE.md` states its hard rules, the sharper the reviews get.
 
+- **Run `/cross:cr` checked out on the PR's branch**, pushed: the reviewers read your local tree.
+- **`/cross:fix-cr` never pushes.** It commits the fixes and names them in its replies; push them
+  yourself so reviewers can see them.
+- Opus and Sonnet are the defaults. If one isn't available to you, the skills fall back to the
+  other and say so in the review.
+
 | | What it does |
 |---|---|
-| `/cross:cr [PR]` | Runs the two reviewers in parallel, sorts their findings into *both* / *one only* / *contradicted*, re-checks every single-reviewer finding itself, and posts **one** `COMMENT` review with inline comments tagged `[A+B]`, `[A]` or `[B]`. Open questions and dropped false positives go to a local, git-ignored `scratch.review`. |
-| `/cross:fix-cr [PR]` | Two independent Opus planners (one aiming for the smallest change, one for the root cause) give every finding a verdict: fix, reject, already fixed, out of scope → issue, spec disagreement, or needs you. The session compares their plans using the same `[A+B]`/`[A]`/`[B]` trust, shows you the decisions, applies the fixes test-first and replies on every thread. |
+| `/cross:cr [PR]` | Runs the two reviewers in parallel, sorts their findings into *both* / *one only* / *contradicted*, re-checks every single-reviewer finding itself, and posts **one** `COMMENT` review with inline comments tagged `[A+B]`, `[A]` or `[B]` (or `[S]` for a requirement from the ticket in your session it caught). Open questions and dropped false positives go to a local, git-ignored `scratch.review`. |
+| `/cross:fix-cr [PR]` | Two independent Opus planners (one aiming for the smallest change, one for the root cause) give every finding a verdict: fix, reject, already fixed, out of scope → issue, spec disagreement, or needs you. The session compares their plans using the same `[A+B]`/`[A]`/`[B]`/`[S]` trust, shows you the decisions, applies the fixes test-first and replies on every thread. |
 | `code-reviewer` agent | The reviewer `/cross:cr` runs twice. Reviews against your project's own spec and verifies each finding before reporting it. |
 | `fix-planner` agent | The planner `/cross:fix-cr` runs twice. Reads the code, never edits it. |
 

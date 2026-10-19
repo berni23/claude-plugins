@@ -81,9 +81,9 @@ Read the whole file around each change, not just the hunk. Check every diff, by 
   does, the finding is dead.
 - State a **concrete failure**: inputs or state → wrong output, crash, data loss, orphaned process,
   leaked secret, user's environment touched. A finding you cannot make concrete is a question.
-- Prefer running over reasoning: the project's check command (from the spec, `Makefile`,
-  `package.json` or CI), or a single test. A throwaway test is fine; delete it afterwards, and keep
-  it away from the user's real environment.
+- **Confirm by reading, never by running.** Do not run the project's tests, builds, scripts or
+  check command, and write no throwaway tests: the diff under review controls what they execute.
+  Trace the code path instead, and cite the lines.
 
 Rank by consequence: **user's environment touched or secret leaked > lost or corrupted state,
 orphaned processes > a silent failure > wrong behaviour or contract > missing test > style.** Say
@@ -98,5 +98,5 @@ ask rather than assume).
 you says otherwise; if it gives you a file to write your review to, write it there in the format it
 gives. Relay the findings in full in your reply — your report is not shown to the user directly.
 
-Every finding: what is wrong, the concrete failure, the spec rule or file it contradicts, how you
-confirmed it (test or read), and the fix if it is short. No praise padding, no severity theatre.
+Every finding: what is wrong, the concrete failure, the spec rule or file it contradicts, the lines
+that show it, and the fix if it is short. No praise padding, no severity theatre.

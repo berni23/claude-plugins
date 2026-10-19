@@ -1,6 +1,6 @@
 ---
 name: fix-cr
-description: Address the code review on a PR (the latest, or the current branch's) — two independent fix-planner agents plan an answer to every finding, then this session compares the plans, decides, applies the fixes and replies on the PR. Use after /cross:cr or any other review lands on a PR.
+description: Address the code review on a PR (the latest, or the current branch's) — two independent fix-planner agents plan an answer to every finding, then this session compares the plans, decides, applies the fixes and replies on the PR. It never pushes; pushing the fixes is left to the user. Use after /cross:cr or any other review lands on a PR.
 argument-hint: [PR number or URL] [scope notes, e.g. "only the API findings"]
 ---
 
@@ -33,7 +33,8 @@ State which PR you are working on in one line before touching anything. Be on it
 
 **`/cross:cr` posts one merged review from two independent reviewers**: agent A (**Opus**, runtime,
 state & failure lens) and agent B (**Sonnet**, spec, contract & coverage lens). Each finding is
-tagged **`[A+B]`**, **`[A]`** or **`[B]`**, and the orchestrator verified it before posting. Tell the
+tagged **`[A+B]`**, **`[A]`** or **`[B]`** — or **`[S]`**, added by the orchestrator from a ticket or
+requirement it had in context — and the orchestrator verified it before posting. Tell the
 user this in one line when you name the PR. A review from anyone else has no tags; address it the
 same way.
 
@@ -86,7 +87,8 @@ wrong", no severity. The planners are independent only if nothing in their input
 
 Launch two `fix-planner` agents (Agent tool, `subagent_type: "cross:fix-planner"`), **both in a
 single message** so they run concurrently, **both on Opus** (`model: "opus"`, the latest). Pass
-`model` explicitly; if it is unavailable, stop and say so.
+`model` explicitly. If Opus is unavailable, run both on Sonnet (`model: "sonnet"`) rather than stop,
+and say so in your report — never silently.
 
 **Lenses:** both plan every finding, but each leads with a different question:
 - **A — the smallest correct change:** is the finding real at all, and what is the least code that
@@ -162,6 +164,8 @@ touches something a unit test cannot prove, also do a real run.
 ## 7. Answer on the PR
 
 Reply on **each** thread you acted on, saying what changed — and on each you rejected, saying why.
+⚠️ **This skill does not push.** Name the commit in each reply; until the user pushes, reviewers on
+GitHub cannot see it, so say so in your report (§8).
 A finding that is silently dropped reads as one that was missed.
 
 ```bash

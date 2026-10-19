@@ -37,9 +37,9 @@ independent.
 - **spec** — code and spec disagree; say which one is wrong.
 - **user** — it needs a decision only the user can make; state the question.
 
-Reproduce before you rule. Check for an existing test first (`grep -rn` over the test files). A
-throwaway test is fine to confirm a claim — delete it afterwards, and never run anything against the
-user's real environment.
+Check before you rule, **by reading**: look for an existing test first (`grep -rn` over the test
+files), then trace the code path. Do not run the project's tests, builds or scripts, and write no
+throwaway tests — the session that applies the fix runs them.
 
 **Do not commit, push, post to GitHub or edit source.** Your only write is your plan file.
 
@@ -53,7 +53,7 @@ Write the whole plan to the file the prompt names, via a `cat > … <<'EOF'` her
 ### <n>. <finding's one-line claim>
 - verdict: fix | reject | already fixed | issue | spec | user
 - confidence: high | medium | low
-- evidence: <how you checked: test you ran, file:line you read>
+- evidence: <file:line you read, existing test you found>
 - plan: <fix shape, or the reason / question>
 - test: <regression test and why it fails today>      (fix only)
 
