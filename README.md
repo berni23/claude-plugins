@@ -27,7 +27,13 @@ A single AI reviewer has two problems. It misses things, and it reports things t
 a "race condition" that can't happen, a "missing null check" two lines above. You end up reviewing
 the review.
 
-**cross** fixes both:
+> [!IMPORTANT]
+> **`/cross:cr` and `/cross:fix-cr` are not a replacement for human review.** They catch and filter
+> more than a single AI reviewer does, but every finding is checked by reading, not proven, and
+> every fix is the AI's judgement. Use them to prepare a PR for a human reviewer, and have a person
+> look at the review and the fixes before merging anything that matters.
+
+**cross** cuts down both:
 
 - **Two reviewers, reviewing blind.** One Opus reviewer leads with runtime, state and failure modes.
   One Sonnet reviewer leads with spec, contract and test coverage. Neither sees the other's output.
@@ -35,8 +41,6 @@ the review.
   each finding against the code, drops false positives and noise (recording why), and adds what it
   sees itself, including from the ticket or requirements it already has in context. It's a
   reviewer, not a referee. Nobody runs the PR's code; everything is checked by reading.
-- **It informs a human review; it doesn't replace one.** Checked by reading is not proven. Have
-  someone look at the review before acting on it, on anything that matters.
 - **One review, with a trust label on every comment.** It posts as a normal GitHub review, and each
   comment is tagged with who found it:
   - **`[A+B]`**: both reviewers found it on their own. Almost certainly real.

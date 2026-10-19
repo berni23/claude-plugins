@@ -16,7 +16,7 @@
   other model instead of stopping, and say so.
 - Documented that `/cross:fix-cr` never pushes.
 - Docs describe `/cross:cr`'s final pass as a third reviewer (it adds its own `[S]` findings, not
-  only context ones), stop calling the result "verified", and recommend a human review on top.
+  only context ones), stop calling the result "verified", and say up front, in the README, that `cr`/`fix-cr` don't replace human review.
 
 ## 0.3.0
 
