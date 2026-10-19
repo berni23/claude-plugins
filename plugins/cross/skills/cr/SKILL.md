@@ -102,12 +102,13 @@ Each writes its whole review to its own file — **A to `scratch.review.a`, B to
 ## Suggestions / notes
 ```
 
-## 3. Reconcile and verify — the point of the exercise
+## 3. Write the final review — the point of the exercise
 
 ⚠️ **An agent that stops without a completion record has written nothing** — check both scratch
 files exist and name this PR and commit first.
 
-Do not relay two reviews side by side. Sort every finding into tiers, matching on **the underlying
+You are the third reviewer, not a referee: you have both reviews, the code, and whatever context
+this session holds. Do not relay two reviews side by side. Sort every finding into tiers, matching on **the underlying
 defect**, not wording — two agents describe one bug differently, and one line can host two bugs.
 
 - **Both** — highest confidence. Note whether they agree on severity too.
@@ -118,7 +119,8 @@ defect**, not wording — two agents describe one bug differently, and one line 
 
 **Rule with this session's context, if it has any** (§1). A ticket, an acceptance criterion or a
 decision the user took can **drop** a finding about scope or intent, or **add** one the agents
-couldn't see (an unmet criterion — tag it **`[S]`**, cite the ticket by id). It never drops a real
+couldn't see (an unmet criterion — cite the ticket by id). Anything you add, from context or from
+your own reading, is tagged **`[S]`**. It never drops a real
 defect (crash, lost state, leaked secret). ⚠️ If this session wrote the code, "it was meant that
 way" is not evidence — only what the ticket or the user stated is. Record every drop and its source
 in `scratch.review`.
@@ -138,9 +140,9 @@ Rate severity yourself; don't inherit either agent's.
 
 ## 4. Post one merged review
 
-One GitHub review on the PR, from you, containing **only verified findings**. Each inline comment
+One GitHub review on the PR, from you, containing **only findings that survived your check**. Each inline comment
 starts with a tag saying who raised it — **`[A+B]`**, **`[A]`**, **`[B]`**, or **`[S]`** for one you
-added from the session's context — then the finding, the failure, and how it was confirmed (for
+added — then the finding, the failure, and how it was confirmed (for
 `[S]`, the requirement it breaks). Post it as a `COMMENT` review.
 
 ⚠️ **Posting with `gh api` has three traps, and the failure is a bare 422:**

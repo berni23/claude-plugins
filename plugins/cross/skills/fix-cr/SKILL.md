@@ -33,8 +33,8 @@ State which PR you are working on in one line before touching anything. Be on it
 
 **`/cross:cr` posts one merged review from two independent reviewers**: agent A (**Opus**, runtime,
 state & failure lens) and agent B (**Sonnet**, spec, contract & coverage lens). Each finding is
-tagged **`[A+B]`**, **`[A]`** or **`[B]`** — or **`[S]`**, added by the orchestrator from a ticket or
-requirement it had in context — and the orchestrator verified it before posting. Tell the
+tagged **`[A+B]`**, **`[A]`** or **`[B]`** — or **`[S]`**, added by the orchestrator itself, often from a ticket or
+requirement it had in context — and the orchestrator checked it before posting. Tell the
 user this in one line when you name the PR. A review from anyone else has no tags; address it the
 same way.
 

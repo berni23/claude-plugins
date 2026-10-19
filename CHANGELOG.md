@@ -15,6 +15,8 @@
 - Model fallback: if Opus or Sonnet isn't available, `/cross:cr` and `/cross:fix-cr` run on the
   other model instead of stopping, and say so.
 - Documented that `/cross:fix-cr` never pushes.
+- Docs describe `/cross:cr`'s final pass as a third reviewer (it adds its own `[S]` findings, not
+  only context ones), stop calling the result "verified", and recommend a human review on top.
 
 ## 0.3.0
 

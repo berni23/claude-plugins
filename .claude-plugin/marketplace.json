@@ -14,7 +14,7 @@
     {
       "name": "cross",
       "source": "./plugins/cross",
-      "description": "Two independent code reviewers, one merged and verified GitHub review, answered in the session that wrote the code."
+      "description": "Two blind code reviewers and a final pass with your session's context write one GitHub review, answered in the session that wrote the code."
     }
   ]
 }
