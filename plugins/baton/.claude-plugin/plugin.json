@@ -1,6 +1,6 @@
 {
   "name": "baton",
-  "version": "0.4.0",
+  "version": "0.3.0",
   "description": "A relay-race handoff between Claude Code sessions: /baton:update writes baton.md before every commit, /baton:pickup verifies it against git and the tracker at the next session's start and works the next item.",
   "author": {
     "name": "Bernat Ferrer",
