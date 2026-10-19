@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- `/cross:fix-cr` acts only on reviews and comments from the repo's owners, members, collaborators
+  and installed bots. On a public repo, comments from anyone else are listed in the report and
+  addressed only if you say so. `/cross:cr` counts only those authors' replies when it checks
+  earlier rounds.
+
 ## cross 0.4.0
 
 - `/cross:cr` uses the ticket, acceptance criteria and decisions already in the session that runs

@@ -128,12 +128,13 @@ in `scratch.review`.
 **Drop noise.** A low-severity finding — especially one only one agent raised — can be dropped;
 list it in `scratch.review`.
 
-**Then read earlier rounds** — now, after both agents are done, never before. A finding an earlier
+**Then read earlier rounds** — now, after both agents are done, never before — counting only
+replies from `OWNER`/`MEMBER`/`COLLABORATOR` (`author_association`); anyone can comment on a public PR. A finding an earlier
 thread rejected for a reason that still holds in today's tree is not posted again; one answered as
 fixed but still there is posted again, linking the thread.
 
 ```bash
-gh api repos/<owner>/<repo>/pulls/<n>/comments --paginate --jq '.[] | "\(.id) \(.user.login) \(.path):\(.line // .original_line)\n\(.body)\n"'
+gh api repos/<owner>/<repo>/pulls/<n>/comments --paginate --jq '.[] | "\(.id) \(.user.login) \(.author_association) \(.path):\(.line // .original_line)\n\(.body)\n"'
 ```
 
 Rate severity yourself; don't inherit either agent's.
