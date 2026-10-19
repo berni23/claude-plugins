@@ -1,14 +1,11 @@
 # Changelog
 
-## Unreleased
+## cross 0.4.0
 
 - `/cross:fix-cr` acts only on reviews and comments from the repo's owners, members, collaborators
   and installed bots. On a public repo, comments from anyone else are listed in the report and
   addressed only if you say so. `/cross:cr` counts only those authors' replies when it checks
   earlier rounds.
-
-## cross 0.4.0
-
 - `/cross:cr` uses the ticket, acceptance criteria and decisions already in the session that runs
   it, without fetching any, when it reconciles the two reviews: it can drop a finding about scope
   the ticket answers, or add one the reviewers couldn't see, tagged `[S]`. The reviewers never
