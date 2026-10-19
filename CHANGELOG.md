@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## cross 0.4.0
 
 - `/cross:cr` uses the ticket, acceptance criteria and decisions already in the session that runs
   it, without fetching any, when it reconciles the two reviews: it can drop a finding about scope
@@ -16,7 +16,8 @@
   other model instead of stopping, and say so.
 - Documented that `/cross:fix-cr` never pushes.
 - Docs describe `/cross:cr`'s final pass as a third reviewer (it adds its own `[S]` findings, not
-  only context ones), stop calling the result "verified", and say up front, in the README, that `cr`/`fix-cr` don't replace human review.
+  only context ones), stop calling the result "verified", and say up front, in the README, that
+  `cr`/`fix-cr` don't replace human review.
 
 ## 0.3.0
 

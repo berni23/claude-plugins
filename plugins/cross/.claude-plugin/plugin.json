@@ -1,6 +1,6 @@
 {
   "name": "cross",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Two-reviewer PR review: /cross:cr runs two independent code reviewers (Opus and Sonnet, different lenses), then the session writes and posts one final GitHub review from both, plus its own context; /cross:fix-cr has two independent planners answer every finding, then decides and applies the fixes in the session that wrote the code.",
   "author": {
     "name": "Bernat Ferrer",
