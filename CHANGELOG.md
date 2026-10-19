@@ -2,6 +2,10 @@
 
 ## cross 0.4.0
 
+- Everything posted to GitHub is marked as an agent's, since it goes out under your account:
+  `/cross:cr`'s review and comments start with `[cr-agent]`, `/cross:fix-cr`'s replies, PR
+  comments and filed issues with `[fix-cr-agent]`. `/cross:cr` re-checks an earlier
+  `[fix-cr-agent]` rejection instead of taking it as a human's.
 - `/cross:fix-cr` acts only on reviews and comments from the repo's owners, members, collaborators
   and installed bots. On a public repo, comments from anyone else are listed in the report and
   addressed only if you say so. `/cross:cr` counts only those authors' replies when it checks
@@ -18,7 +22,8 @@
 - `/cross:cr` stops if you are not on the PR's branch, instead of reviewing the wrong tree.
 - Model fallback: if Opus or Sonnet isn't available, `/cross:cr` and `/cross:fix-cr` run on the
   other model instead of stopping, and say so.
-- Documented that `/cross:fix-cr` never pushes.
+- `/cross:fix-cr` no longer commits (it made one commit per finding) or pushes: it leaves the
+  fixes in your working tree and asks you to review them first.
 - Docs describe `/cross:cr`'s final pass as a third reviewer (it adds its own `[S]` findings, not
   only context ones), stop calling the result "verified", and say up front, in the README, that
   `cr`/`fix-cr` don't replace human review.

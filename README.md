@@ -51,7 +51,10 @@ the review.
     the final pass uses it to add findings or clear ones about scope the ticket already answers.
     It never clears a real defect, and never goes looking for context it doesn't have.
 
-> **[A+B]** `retry()` re-enqueues the job before the lock is released, so a fast worker picks it up
+Everything either skill posts goes out under your GitHub account, so it is marked as an agent's:
+every review comment starts with `[cr-agent]` and every reply or filed issue with `[fix-cr-agent]`.
+
+> **[cr-agent] [A+B]** `retry()` re-enqueues the job before the lock is released, so a fast worker picks it up
 > while the first attempt is still writing. Two writes to the same row. Confirmed by reading
 > `worker.ts:88–104`: the `finally` that releases the lock runs after `enqueue()`.
 >
@@ -74,8 +77,8 @@ open PR  →  /cross:cr  →  /cross:fix-cr  →  push
 GitHub-only. The more clearly your `CLAUDE.md` states its hard rules, the sharper the reviews get.
 
 - **Run `/cross:cr` checked out on the PR's branch**, pushed: the reviewers read your local tree.
-- **`/cross:fix-cr` never pushes.** It commits the fixes and names them in its replies; push them
-  yourself so reviewers can see them.
+- **`/cross:fix-cr` doesn't commit or push.** It leaves the fixes in your working tree and asks
+  you to review them; it commits or pushes only if you tell it to.
 - Opus and Sonnet are the defaults. If one isn't available to you, the skills fall back to the
   other and say so in the review.
 

@@ -131,7 +131,8 @@ list it in `scratch.review`.
 **Then read earlier rounds** — now, after both agents are done, never before — counting only
 replies from `OWNER`/`MEMBER`/`COLLABORATOR` (`author_association`); anyone can comment on a public PR. A finding an earlier
 thread rejected for a reason that still holds in today's tree is not posted again; one answered as
-fixed but still there is posted again, linking the thread.
+fixed but still there is posted again, linking the thread. A reply starting with `[fix-cr-agent]` is
+an agent's verdict posted under a trusted account, not a human's: re-check its reason yourself.
 
 ```bash
 gh api repos/<owner>/<repo>/pulls/<n>/comments --paginate --jq '.[] | "\(.id) \(.user.login) \(.author_association) \(.path):\(.line // .original_line)\n\(.body)\n"'
@@ -141,9 +142,11 @@ Rate severity yourself; don't inherit either agent's.
 
 ## 4. Post one merged review
 
-One GitHub review on the PR, from you, containing **only findings that survived your check**. Each inline comment
-starts with a tag saying who raised it — **`[A+B]`**, **`[A]`**, **`[B]`**, or **`[S]`** for one you
-added — then the finding, the failure, and how it was confirmed (for
+One GitHub review on the PR, from you, containing **only findings that survived your check**.
+⚠️ **It posts under the user's account, so mark it as an agent's:** the review body and every inline
+comment start with **`[cr-agent]`**, and the body's first line says it is an AI review from
+`/cross:cr`. Then each comment carries a tag saying who raised it — **`[A+B]`**, **`[A]`**, **`[B]`**,
+or **`[S]`** for one you added — then the finding, the failure, and how it was confirmed (for
 `[S]`, the requirement it breaks). Post it as a `COMMENT` review.
 
 ⚠️ **Posting with `gh api` has three traps, and the failure is a bare 422:**

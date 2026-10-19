@@ -1,6 +1,6 @@
 ---
 name: fix-cr
-description: Address the code review on a PR (the latest, or the current branch's) — two independent fix-planner agents plan an answer to every finding, then this session compares the plans, decides, applies the fixes and replies on the PR. It never pushes; pushing the fixes is left to the user. Use after /cross:cr or any other review lands on a PR.
+description: Address the code review on a PR (the latest, or the current branch's) — two independent fix-planner agents plan an answer to every finding, then this session compares the plans, decides, applies the fixes and replies on the PR. It does not commit or push: it ends by asking the user to review the changes. Use after /cross:cr or any other review lands on a PR.
 argument-hint: [PR number or URL] [scope notes, e.g. "only the API findings"]
 ---
 
@@ -32,8 +32,8 @@ git fetch origin && git rev-list --left-right --count origin/<branch>...<branch>
 State which PR you are working on in one line before touching anything. Be on its branch.
 
 **`/cross:cr` posts one merged review from two independent reviewers**: agent A (**Opus**, runtime,
-state & failure lens) and agent B (**Sonnet**, spec, contract & coverage lens). Each finding is
-tagged **`[A+B]`**, **`[A]`** or **`[B]`** — or **`[S]`**, added by the orchestrator itself, often from a ticket or
+state & failure lens) and agent B (**Sonnet**, spec, contract & coverage lens). Its comments start
+with `[cr-agent]`, then each finding is tagged **`[A+B]`**, **`[A]`** or **`[B]`** — or **`[S]`**, added by the orchestrator itself, often from a ticket or
 requirement it had in context — and the orchestrator checked it before posting. Tell the
 user this in one line when you name the PR. A review from anyone else has no tags; address it the
 same way.
@@ -127,7 +127,7 @@ Match the two plans finding by finding and sort each into a tier:
 
 **Rate severity yourself; don't inherit the reviewer's or a planner's.** Each finding ends as one of:
 **fix**, **reject** (with the reason), **already fixed** (name the commit — the branch needs pushing),
-**issue** (⚠️ file it: `gh issue create`, or link one that already covers it — never park it in
+**issue** (⚠️ file it: `gh issue create`, body starting `[fix-cr-agent]`, or link one that already covers it — never park it in
 `baton.md`, which is rewritten every session), **spec** (fix whichever of code and spec is wrong, in
 this change), or **user**.
 
@@ -148,7 +148,7 @@ and its rules for working on the repo. Most findings are about an interaction be
 one of those rules, not about the hunk.
 
 Apply the decided fixes **one finding at a time**: fix, run the relevant tests, move on. Keep each fix
-self-contained — one commit per finding, if you commit — so one wrong fix can be reverted without
+self-contained so one wrong fix can be undone without
 losing the others. If fixes interact (the plans' *Cross-cutting* section), land them in the order
 that keeps each step green.
 
@@ -169,8 +169,9 @@ touches something a unit test cannot prove, also do a real run.
 ## 7. Answer on the PR
 
 Reply on **each** thread you acted on, saying what changed — and on each you rejected, saying why.
-⚠️ **This skill does not push.** Name the commit in each reply; until the user pushes, reviewers on
-GitHub cannot see it, so say so in your report (§8).
+⚠️ **Start every reply and PR comment with `[fix-cr-agent]`** — they post under the user's account,
+and nobody reading the PR should take an agent's answer for a human's.
+Say in each reply that the fix is local until the user pushes it.
 A finding that is silently dropped reads as one that was missed.
 
 ```bash
@@ -180,8 +181,8 @@ gh api repos/<owner>/<repo>/pulls/<n>/comments/<comment-id>/replies -f body='...
 Findings that were in the review **body** have no thread: answer them together in one PR comment
 (`gh pr comment <n> --body-file …`). Resolving threads is left to a human.
 
-⚠️ **`scratch.review` items have no thread either.** Where one changed the code, say so in the commit
-message or the PR comment; where it was a question, answer it in your report to the user (§8).
+⚠️ **`scratch.review` items have no thread either.** Where one changed the code, say so in the PR
+comment; where it was a question, answer it in your report to the user (§8).
 Do not silently drop one because it had no comment id.
 
 ## 8. Report
@@ -194,5 +195,8 @@ and whether the planners agreed. **Lead with anything waiting on the user.**
 likely to be waiting on, because several are questions addressed to them. For each: answered (with
 the answer), fixed, filed, or still needs them. Then say whether the file is spent; offer to rewrite
 it with whatever is genuinely still open, and leave it alone otherwise — it is the next `/cross:cr`
-run's to overwrite. When you commit and the repo has a `baton.md`, it comes with the commit (the
+run's to overwrite.
+
+⚠️ **Do not commit or push.** End by asking the user to review the changes; commit or push only if
+they say so. When that commit happens and the repo has a `baton.md`, it comes with the commit (the
 `baton-check` hook enforces it).
