@@ -33,14 +33,15 @@ State which PR you are working on in one line before touching anything. Be on it
 
 **`/cross:cr` posts one merged review from two independent reviewers**: agent A (**Opus**, runtime,
 state & failure lens) and agent B (**Sonnet**, spec, contract & coverage lens). Its comments start
-with `[cr-agent]`, then each finding is tagged **`[A+B]`**, **`[A]`** or **`[B]`** — or **`[S]`**, added by the orchestrator itself, often from a ticket or
-requirement it had in context — and the orchestrator checked it before posting. Tell the
-user this in one line when you name the PR. A review from anyone else has no tags; address it the
-same way.
+with `[cr-agent]`, then a severity — **`[high]`**, **`[medium]`** or **`[low]`** — and the
+orchestrator checked each before posting. Who raised each finding is **not** on the PR: it is in
+`scratch.review`'s tier table — **`A+B`**, **`A`**, **`B`**, or **`S`** for one the orchestrator
+added itself, often from a ticket or requirement it had in context. Tell the user this in one line
+when you name the PR. A review from anyone else has neither; address it the same way.
 
-**Did this session write the code?** If not — a fresh session, after `/baton:pickup` or a compaction
-— the intent the skill relies on has to be rebuilt before you judge anything: read the PR
-description, the spec, `baton.md` if there is one, and `git log <base>..HEAD`. Say in one line that
+**Did this session write the code?** If not — a fresh session, or one after a compaction —
+the intent the skill relies on has to be rebuilt before you judge anything: read the PR
+description, the spec, any handoff notes the project keeps, and `git log <base>..HEAD`. Say in one line that
 you are working from those, and in §4 take the user's call on more of the split findings.
 
 ## 2. Collect the whole review — all four surfaces
@@ -127,8 +128,8 @@ Match the two plans finding by finding and sort each into a tier:
 
 **Rate severity yourself; don't inherit the reviewer's or a planner's.** Each finding ends as one of:
 **fix**, **reject** (with the reason), **already fixed** (name the commit — the branch needs pushing),
-**issue** (⚠️ file it: `gh issue create`, body starting `[fix-cr-agent]`, or link one that already covers it — never park it in
-`baton.md`, which is rewritten every session), **spec** (fix whichever of code and spec is wrong, in
+**issue** (⚠️ file it: `gh issue create`, body starting `[fix-cr-agent]`, or link one that already covers it — never park it in a
+local note or handoff file, which nobody else sees), **spec** (fix whichever of code and spec is wrong, in
 this change), or **user**.
 
 ⚠️ **`scratch.review` entries are mostly questions, not findings.** Answer what the tree settles, ask
@@ -171,7 +172,8 @@ touches something a unit test cannot prove, also do a real run.
 Reply on **each** thread you acted on, saying what changed — and on each you rejected, saying why.
 ⚠️ **Start every reply and PR comment with `[fix-cr-agent]`** — they post under the user's account,
 and nobody reading the PR should take an agent's answer for a human's.
-Say in each reply that the fix is local until the user pushes it.
+Say in each reply that the fix is local until the user pushes it. Say what changed or why not —
+never how it was decided (no planners, A/B or tiers on the PR).
 A finding that is silently dropped reads as one that was missed.
 
 ```bash
@@ -188,7 +190,8 @@ Do not silently drop one because it had no comment id.
 ## 8. Report
 
 Give the user: what you fixed (with the test that pins each), what you rejected and why, what you
-filed as an issue, and what is still open — noting for each the review's tag (`[A+B]`, `[A]`, `[B]`)
+filed as an issue, and what is still open — noting for each its severity and, when
+`scratch.review` has it, who raised it (`A+B`, `A`, `B`, `S`),
 and whether the planners agreed. **Lead with anything waiting on the user.**
 
 **Cover the `scratch.review` items explicitly and separately** — they are the ones the user is most
@@ -198,5 +201,4 @@ it with whatever is genuinely still open, and leave it alone otherwise — it is
 run's to overwrite.
 
 ⚠️ **Do not commit or push.** End by asking the user to review the changes; commit or push only if
-they say so. When that commit happens and the repo has a `baton.md`, it comes with the commit (the
-`baton-check` hook enforces it).
+they say so.
