@@ -6,8 +6,8 @@
     "name": "Bernat Ferrer",
     "url": "https://github.com/berni23"
   },
-  "homepage": "https://github.com/berni23/claude-plugins",
-  "repository": "https://github.com/berni23/claude-plugins",
+  "homepage": "https://github.com/berni23/laight-plugins",
+  "repository": "https://github.com/berni23/laight-plugins",
   "license": "Apache-2.0",
   "keywords": ["code-review", "pull-request", "github", "subagents", "workflow"]
 }
