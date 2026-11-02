@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- `/cross:cr` posts its review as one reviewer's: each comment carries a severity (`[high]`,
+  `[medium]`, `[low]`) instead of `[A+B]`/`[A]`/`[B]`/`[S]`, and nothing on the PR mentions agents,
+  models or tiers. Who raised each finding stays in `scratch.review`. The tier is evidence for the
+  severity and for posting at all, not a rule; findings both reviewers raised are still re-read.
+- `/cross:fix-cr` reads severities from the review and provenance from `scratch.review`, and its
+  replies say what changed, never how it was decided. It no longer mentions `baton.md` or
+  `/baton:pickup`: out-of-scope findings go to an issue, never a local note.
+
 ## cross 0.4.0
 
 - Everything posted to GitHub is marked as an agent's, since it goes out under your account:

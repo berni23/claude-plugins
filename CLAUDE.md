@@ -39,8 +39,8 @@ The skills come in two pairs, and each half is written for the other as its read
   verify against git and the tracker, section 2 as the work order, section 3 as blockers to check
   first. Changing the section structure in one skill means changing the other.
 - **`cr` ↔ `fix-cr`** (cross). `cr` runs `code-reviewer` twice with different lenses (Opus: runtime/state/
-  failure; Sonnet: spec/contract/tests), verifies findings, and posts one merged GitHub review tagged
-  `[A+B]`/`[A]`/`[B]`. `fix-cr` mirrors it: two Opus `fix-planner`s (smallest change / root cause)
+  failure; Sonnet: spec/contract/tests), verifies findings, and posts one GitHub review whose comments carry a
+  severity (`[high]`/`[medium]`/`[low]`); who raised each (`A+B`/`A`/`B`/`S`) stays in `scratch.review`. `fix-cr` mirrors it: two Opus `fix-planner`s (smallest change / root cause)
   plan every finding independently from a numbered `scratch.findings`, and the session compares them
   with the same tiers. The planners only advise: deciding, editing and replying on the PR stay **in
   the session that wrote the code** and are never delegated.

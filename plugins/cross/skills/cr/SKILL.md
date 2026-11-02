@@ -59,7 +59,7 @@ here — do not fetch tickets or search for context — and pass none of it to t
 the latest of each. Pass `model` explicitly on both. If one is unavailable, fall back rather than
 stop: give that agent the other's model (both on Sonnet, or both on Opus) and relaunch only the one
 that failed. Two models catch more than one model twice, so **never fall back silently** — say which
-agent ran on what in the review body, in `scratch.review` and to the user.
+agent ran on what in `scratch.review` and to the user (not on the PR).
 
 **Lenses:** both review the whole diff, but each leads with a different emphasis:
 - **A — runtime, state & failure:** what happens when it runs — concurrency, process and resource
@@ -107,11 +107,16 @@ Each writes its whole review to its own file — **A to `scratch.review.a`, B to
 ⚠️ **An agent that stops without a completion record has written nothing** — check both scratch
 files exist and name this PR and commit first.
 
-You are the third reviewer, not a referee: you have both reviews, the code, and whatever context
-this session holds. Do not relay two reviews side by side. Sort every finding into tiers, matching on **the underlying
-defect**, not wording — two agents describe one bug differently, and one line can host two bugs.
+You are the reviewer who signs the review: you have both reviews, the code, and whatever context
+this session holds. **A and B are your inputs, not the output** — what lands on the PR is your
+review, written as one reviewer's. The tiers below are how you decide **whether a finding is worth
+posting at all and which severity it gets**; they never appear on the PR.
 
-- **Both** — highest confidence. Note whether they agree on severity too.
+Sort every finding into tiers, matching on **the underlying defect**, not wording — two agents
+describe one bug differently, and one line can host two bugs.
+
+- **Both** — highest confidence, but still read the code yourself: two reviewers can share a
+  misreading. Note whether they agree on severity too.
 - **One only** — ⚠️ **re-check each yourself** by reading the code: *real (the other missed it)*,
   *false positive* (drop it, and record why in `scratch.review`), or *unresolved*. This tier is where
   the value is.
@@ -120,7 +125,7 @@ defect**, not wording — two agents describe one bug differently, and one line 
 **Rule with this session's context, if it has any** (§1). A ticket, an acceptance criterion or a
 decision the user took can **drop** a finding about scope or intent, or **add** one the agents
 couldn't see (an unmet criterion — cite the ticket by id). Anything you add, from context or from
-your own reading, is tagged **`[S]`**. It never drops a real
+your own reading, is recorded as **`S`** in `scratch.review`. It never drops a real
 defect (crash, lost state, leaked secret). ⚠️ If this session wrote the code, "it was meant that
 way" is not evidence — only what the ticket or the user stated is. Record every drop and its source
 in `scratch.review`.
@@ -138,16 +143,31 @@ an agent's verdict posted under a trusted account, not a human's: re-check its r
 gh api repos/<owner>/<repo>/pulls/<n>/comments --paginate --jq '.[] | "\(.id) \(.user.login) \(.author_association) \(.path):\(.line // .original_line)\n\(.body)\n"'
 ```
 
-Rate severity yourself; don't inherit either agent's.
+**Rate severity yourself; don't inherit either agent's.** Use the tier as evidence: agreement from
+both reviewers, or your own confirmation of a one-reviewer finding, backs a higher rating; a
+finding you could only partly confirm gets a lower one or goes to `scratch.review` as an open
+question. Then decide what is worth the PR author's time — post what is real and matters, drop the
+rest into `scratch.review`.
 
-## 4. Post one merged review
+⚠️ **The tier is evidence, not a rule.** "Both found it" doesn't mean post it, and "only one found
+it" doesn't mean drop it. Judge each finding on the code in front of you, together with the tier:
+a pedantic point both raised can be dropped, and a crash only one caught can be `[high]`. The
+severity label and the decision to post are yours.
+
+## 4. Post one review
 
 One GitHub review on the PR, from you, containing **only findings that survived your check**.
 ⚠️ **It posts under the user's account, so mark it as an agent's:** the review body and every inline
 comment start with **`[cr-agent]`**, and the body's first line says it is an AI review from
-`/cross:cr`. Then each comment carries a tag saying who raised it — **`[A+B]`**, **`[A]`**, **`[B]`**,
-or **`[S]`** for one you added — then the finding, the failure, and how it was confirmed (for
-`[S]`, the requirement it breaks). Post it as a `COMMENT` review.
+`/cross:cr`. Each comment then carries its severity — **`[high]`**, **`[medium]`** or **`[low]`** —
+then the finding, the failure, and the suggested fix (for one from session context, the
+requirement it breaks, citing the ticket).
+
+⚠️ **Say nothing about how the review was made.** No agents, A/B, models, lenses, tiers, "both
+reviewers found", "re-checked", counts of dropped findings or any other process notes — not in the
+body, not in a comment. The body is that one AI-review line, a short overall verdict, and the
+findings that can't be anchored inline; nothing else. Provenance lives only in `scratch.review`.
+Post it as a `COMMENT` review.
 
 ⚠️ **Posting with `gh api` has three traps, and the failure is a bare 422:**
 - `POST /repos/<owner>/<repo>/pulls/<n>/reviews` needs the **full 40-char** `commit_id`
@@ -156,7 +176,7 @@ or **`[S]`** for one you added — then the finding, the failure, and how it was
   ranges first:
   `gh api repos/<owner>/<repo>/pulls/<n>/files --paginate --jq '.[] | .filename, (.patch // "" | split("\n")[] | select(startswith("@@")))'`
 - `subject_type: "file"` is not accepted. A finding outside a hunk, or about something *absent* from
-  the diff, goes in the **review body**, with the same tag.
+  the diff, goes in the **review body**, with its severity.
 
 Build the payload as a JSON file in a temp directory and post it with `gh api --input`, then verify
 it landed:
@@ -171,10 +191,12 @@ gh api repos/<owner>/<repo>/pulls/<n>/comments --jq 'length'
 Write **`scratch.review`** in the repo root from the two halves, then delete them
 (`rm -f scratch.review.a scratch.review.b`). **Overwrite, never append** — one round per file.
 
-- lead with the PR, the commit reviewed, the review id you posted, and a note that anchored findings
-  are on the PR and not repeated;
-- the tier table: every finding, who raised it, your verdict (including dropped false positives and
-  why, so nobody re-litigates them — and for a drop or `[S]` resting on session context, its source);
+- lead with the PR, the commit reviewed, the review id you posted, which model each agent ran on,
+  and a note that anchored findings are on the PR and not repeated;
+- the tier table: every finding, who raised it (`A+B`, `A`, `B` or `S`), the severity you posted
+  it with (or "dropped"), and your verdict (including dropped false positives and low-value
+  findings and why, so nobody re-litigates them — and for a drop or an `S` resting on session
+  context, its source);
 - open questions, tiered the same way — a question both raised genuinely needs answering;
 - suggestions, verification gaps ("spot-checked, not audited", "not run for real"), and judgement
   calls an agent made on the user's behalf.
@@ -184,6 +206,7 @@ home. **Work to be done goes on an issue**, always.
 
 ## 6. Relay
 
-Relay the reconciled result — **neither agent's report is shown to the user.** Keep the tiers; say
-where the review was posted (URL + id) and what went into `scratch.review`. Lead with anything that
+Relay the reconciled result — **neither agent's report is shown to the user.** The tiers can go in
+this relay (it is for the user, not the PR); say where the review was posted (URL + id) and what
+went into `scratch.review`. Lead with anything that
 needs the user's decision before `/cross:fix-cr` can fix it.

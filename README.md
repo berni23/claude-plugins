@@ -41,20 +41,19 @@ the review.
   each finding against the code, drops false positives and noise (recording why), and adds what it
   sees itself, including from the ticket or requirements it already has in context. It's a
   reviewer, not a referee. Nobody runs the PR's code; everything is checked by reading.
-- **One review, with a trust label on every comment.** It posts as a normal GitHub review, and each
-  comment is tagged with who found it:
-  - **`[A+B]`**: both reviewers found it on their own. Almost certainly real.
-  - **`[A]`** / **`[B]`**: only one found it, and the final pass re-checked it before posting. These
-    are the bugs a single reviewer would have missed.
-  - **`[S]`**: added by the final pass itself: something both reviewers missed, or a requirement
-    from the ticket in your session that the diff misses. The reviewers never see that context;
-    the final pass uses it to add findings or clear ones about scope the ticket already answers.
-    It never clears a real defect, and never goes looking for context it doesn't have.
+- **One review, written as one reviewer's.** It posts as a normal GitHub review. Each comment
+  carries a severity, **`[high]`**, **`[medium]`** or **`[low]`**, that the final pass sets itself.
+  Whether both reviewers found a finding, only one did, or the final pass added it is evidence for
+  that severity and for whether to post the finding at all, not a rule: a pedantic point both raised
+  can be dropped, and a crash only one caught can be `[high]`. Who raised what (`A+B`, `A`, `B`, or
+  `S` for the final pass's own, often from the ticket in your session) stays in the local
+  `scratch.review`; the PR never mentions agents, models or tiers. The final pass never clears a
+  real defect with context, and never goes looking for context it doesn't have.
 
 Everything either skill posts goes out under your GitHub account, so it is marked as an agent's:
 every review comment starts with `[cr-agent]` and every reply or filed issue with `[fix-cr-agent]`.
 
-> **[cr-agent] [A+B]** `retry()` re-enqueues the job before the lock is released, so a fast worker picks it up
+> **[cr-agent] [high]** `retry()` re-enqueues the job before the lock is released, so a fast worker picks it up
 > while the first attempt is still writing. Two writes to the same row. Confirmed by reading
 > `worker.ts:88–104`: the `finally` that releases the lock runs after `enqueue()`.
 >
@@ -84,8 +83,8 @@ GitHub-only. The more clearly your `CLAUDE.md` states its hard rules, the sharpe
 
 | | What it does |
 |---|---|
-| `/cross:cr [PR]` | Runs the two reviewers in parallel, sorts their findings into *both* / *one only* / *contradicted*, then writes the final review itself (re-checking single-reviewer findings, dropping noise, adding its own with your session's context) and posts **one** `COMMENT` review with inline comments tagged `[A+B]`, `[A]` or `[B]` (or `[S]` for its own). Open questions and dropped false positives go to a local, git-ignored `scratch.review`. |
-| `/cross:fix-cr [PR]` | Two independent Opus planners (one aiming for the smallest change, one for the root cause) give every finding a verdict: fix, reject, already fixed, out of scope → issue, spec disagreement, or needs you. The session compares their plans using the same `[A+B]`/`[A]`/`[B]`/`[S]` trust, shows you the decisions, applies the fixes test-first and replies on every thread. |
+| `/cross:cr [PR]` | Runs the two reviewers in parallel, sorts their findings into *both* / *one only* / *contradicted*, then writes the final review itself (re-checking single-reviewer findings, dropping noise, adding its own with your session's context) and posts **one** `COMMENT` review with inline comments tagged `[high]`, `[medium]` or `[low]`. Who raised each finding, open questions and dropped findings go to a local, git-ignored `scratch.review`. |
+| `/cross:fix-cr [PR]` | Two independent Opus planners (one aiming for the smallest change, one for the root cause) give every finding a verdict: fix, reject, already fixed, out of scope → issue, spec disagreement, or needs you. The session compares their plans using the same `A+B`/`A`/`B`/`S` tiers, shows you the decisions, applies the fixes test-first and replies on every thread. |
 | `code-reviewer` agent | The reviewer `/cross:cr` runs twice. Reviews against your project's own spec and checks each finding against the code before reporting it. |
 | `fix-planner` agent | The planner `/cross:fix-cr` runs twice. Reads the code, never edits it. |
 
