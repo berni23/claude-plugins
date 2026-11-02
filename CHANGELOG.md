@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- README: an Install section (adding the `laight` marketplace, installing from a session or a
+  terminal, team setup in `.claude/settings.json`, updating and removing), and every link and
+  command now uses the renamed repo, `berni23/laight-plugins`.
 - `/cross:cr` posts its review as one reviewer's: each comment carries a severity (`[high]`,
   `[medium]`, `[low]`) instead of `[A+B]`/`[A]`/`[B]`/`[S]`, and nothing on the PR mentions agents,
   models or tiers. Who raised each finding stays in `scratch.review`. The tier is evidence for the

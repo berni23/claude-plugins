@@ -8,7 +8,7 @@ A Claude Code **plugin marketplace** (named `laight`) holding two independently 
 There is no build, no package manager and no test suite: the product is Markdown prompts plus one
 shell hook. `README.md` is the user-facing description; keep it in step with any behaviour change.
 
-- `.claude-plugin/marketplace.json` — lists both plugins; makes the repo installable via `/plugin marketplace add berni23/claude-plugins`.
+- `.claude-plugin/marketplace.json` — lists both plugins; makes the repo installable via `/plugin marketplace add berni23/laight-plugins`.
 - `plugins/baton/` — session handoff: `skills/pickup`, `skills/update` (→ `/baton:pickup`, `/baton:update`) and `hooks/`, which hold every commit, human or Claude, to `baton.md` (see "Hook details").
 - `plugins/cross/` — PR review: `skills/cr`, `skills/fix-cr` (→ `/cross:cr`, `/cross:fix-cr`), `agents/code-reviewer.md`, which `cr` spawns twice as `subagent_type: "cross:code-reviewer"`, and `agents/fix-planner.md`, which `fix-cr` spawns twice as `"cross:fix-planner"`.
 - Each plugin has its own `.claude-plugin/plugin.json` holding its version.

@@ -7,8 +7,10 @@ Two independent [Claude Code](https://code.claude.com) plugins. Install either o
 | [**cross**](#cross--two-blind-ai-reviewers-one-final-pr-review) | Two AI reviewers with different models and lenses review your PR blind; a third pass, with your session's context, writes **one** GitHub review that says where each comment came from. |
 | [**baton**](#baton--sessions-that-pick-up-where-the-last-one-stopped) | Every Claude Code session leaves a short handoff at commit time, and the next one checks it against git before trusting it. No more cold starts. |
 
+See [Install](#install) for the full steps; in short, inside Claude Code:
+
 ```
-/plugin marketplace add berni23/claude-plugins
+/plugin marketplace add berni23/laight-plugins
 /plugin install cross@laight
 /plugin install baton@laight
 ```
@@ -18,6 +20,64 @@ project's conventions (check command, tracker, hard rules) from its `CLAUDE.md` 
 instead of assuming any.
 
 <!-- TODO: demo GIF of /cross:cr posting a review, then /cross:fix-cr answering it -->
+
+---
+
+## Install
+
+The plugins are published through a plugin **marketplace**, this repo, named `laight`. You add
+the marketplace once, then install the plugins you want from it.
+
+**1. Add the marketplace.** In a Claude Code session:
+
+```
+/plugin marketplace add berni23/laight-plugins
+```
+
+**2. Install the plugins**, one or both:
+
+```
+/plugin install cross@laight
+/plugin install baton@laight
+```
+
+Or run `/plugin`, open **Discover**, and pick them from the `laight` marketplace. Plugins install
+for your user by default, so they work in every project.
+
+**3. Restart Claude Code** (or start a new session) so the skills, agents and hooks load. Check
+with `/plugin` → **Installed**, or type `/cross:` or `/baton:` and see the commands complete.
+
+**From a terminal**, the same without opening a session:
+
+```sh
+claude plugin marketplace add berni23/laight-plugins
+claude plugin install cross@laight
+claude plugin install baton@laight
+```
+
+**For a whole team**, declare the marketplace and the plugins in the project's committed
+`.claude/settings.json`. Whoever opens the project in Claude Code is asked to trust the
+marketplace and install them:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "laight": { "source": { "source": "github", "repo": "berni23/laight-plugins" } }
+  },
+  "enabledPlugins": { "cross@laight": true, "baton@laight": true }
+}
+```
+
+(`claude plugin install cross@laight --scope project` writes the `enabledPlugins` half for you.)
+
+**Update and remove:**
+
+```sh
+claude plugin marketplace update laight    # fetch the latest versions
+claude plugin update cross@laight          # then update a plugin (restart to apply)
+claude plugin uninstall baton@laight
+claude plugin marketplace remove laight
+```
 
 ---
 
